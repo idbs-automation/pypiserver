@@ -161,12 +161,15 @@ def guess_pkgname_and_version(path):
     elif '.' not in path:
         pkgname, version = path.rsplit('-', 1)
     else:
-        pkgname = re.split(r'-(?i)v?\d+[\.a-z]', path)[0]
+        pkgname = re.split(r'-(?i)v?(\d+\.)*\d+[-._]?(((post|dev|a|alpha|b|beta|c|rc|pre|preview|rev|r)(\d+|$))|(\+[0-9A-Za-z]+)|(-\d+$)|$)', path)[0]
         ver_spec = path[len(pkgname) + 1:]
         parts = re.split(r'[\.\-](?=(?i)cp\d|py\d|macosx|linux|sunos|'
                          'solaris|irix|aix|cygwin|win)', ver_spec)
         version = parts[0]
-    return pkgname, version
+    if version.startswith('v'):
+        return pkgname, version[1:]
+    else:
+        return pkgname, version
 
 
 def normalize_pkgname(name):
